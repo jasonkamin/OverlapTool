@@ -1,5 +1,10 @@
 #!/usr/bin/env python 
 
+# Created Oct 2016.
+# For run preparation studies for the upcoming pPb run.
+# 
+# -Jason Kamin 1.Oct.2016
+
 import os
 import sys
 
