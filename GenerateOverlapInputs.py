@@ -9,7 +9,6 @@ import os
 import sys
 
 _j_args = sys.argv
-_myprescaleinputfile = _j_args[1];
 
 _debug = 0;
 _verbosity = 0;
@@ -33,20 +32,25 @@ for i in range(0,len(_j_args)):
         _verbosity = int(_j_args[i+1])
 
 _bail_out = 0;
-if len(_j_args) < 6:
-    _bail_out = 1
-if _mytag == "N_U_L_L":
-    _bail_out = 1
-if _fileloctree == "N_U_L_L":
-    _bail_out = 1
 
-testinputfile = open(_j_args[1],'r')
-for line in testinputfile:
-    splitline = line.split()
-    if splitline[0].startswith("#") == True:
-        continue
-    elif len(splitline) != 5:
-        _bail_out = 2
+if len(_j_args) < 2:
+    _bail_out = 1
+else:
+    _myprescaleinputfile = _j_args[1];
+    if len(_j_args) < 6:
+        _bail_out = 1
+    if _mytag == "N_U_L_L":
+        _bail_out = 1
+    if _fileloctree == "N_U_L_L":
+        _bail_out = 1
+    
+    testinputfile = open(_j_args[1],'r')
+    for line in testinputfile:
+        splitline = line.split()
+        if splitline[0].startswith("#") == True:
+            continue
+        elif len(splitline) != 5:
+            _bail_out = 2
 
 if _bail_out == 1:
     print "\nHand me more arguments!"
@@ -67,12 +71,14 @@ elif _bail_out == 2:
 
 myoutputfilename1 = "Inputs_" + _mytag + ".h"
 
-os.system("cp ~/Dropbox/work/code/Run2016/PrescalesOverlapsEtc/utils/MakeMeAClass.C .")
-os.system("cp ~/Dropbox/work/code/Run2016/PrescalesOverlapsEtc/utils/RestOfCFile1.C .")
-os.system("cp ~/Dropbox/work/code/Run2016/PrescalesOverlapsEtc/utils/RestOfCFile2.C .")
+os.system("cp ./utils/MakeMeAClass.C .")
+os.system("cp ./utils/RestOfCFile1.C .")
+os.system("cp ./utils/RestOfCFile2.C .")
 
-dothisatprompt = "/Applications/root_v6.06.02/bin/root.exe -l -b -q MakeMeAClass.C\\(\\\""
-#dothisatprompt = "/usr/bin/root.exe -l -b -q MakeMeAClass.C\\(\\\""
+if _debug==28:
+    dothisatprompt = "/Applications/root_v6.06.02/bin/root.exe -l -b -q MakeMeAClass.C\\(\\\""
+else: 
+    dothisatprompt = "/usr/bin/root.exe -l -b -q MakeMeAClass.C\\(\\\""
 dothisatprompt = dothisatprompt + _fileloctree + "\\\",\\\"" + _mytag + "\\\"\\)"
 os.system(dothisatprompt)
 if _verbosity == 1:
@@ -403,7 +409,7 @@ myquickrootmacro.write("  return;\n")
 myquickrootmacro.write("}\n")
 myquickrootmacro.close()
 
-if _debug == 1:
+if _debug > 0:
     print "\n\n"
     print "_________________________________________________"
     linecounter = 0;
@@ -419,8 +425,10 @@ if _debug == 1:
 
 if _verbosity == 1:
     os.system("more RunTreeMacro.C")
-dothisatprompt = "/Applications/root_v6.06.02/bin/root.exe -l -q RunTreeMacro.C"
-#dothisatprompt = "/usr/bin/root.exe -l -q RunTreeMacro.C"
+if _debug==28:
+    dothisatprompt = "/Applications/root_v6.06.02/bin/root.exe -l -q RunTreeMacro.C"
+else:
+    dothisatprompt = "/usr/bin/root.exe -l -q RunTreeMacro.C"
 os.system(dothisatprompt)
 os.system("rm RunTreeMacro.C")
 
