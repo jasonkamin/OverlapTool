@@ -76,9 +76,10 @@ os.system("cp ./utils/RestOfCFile1.C .")
 os.system("cp ./utils/RestOfCFile2.C .")
 
 if _debug==28:
-    dothisatprompt = "/Applications/root_v6.06.02/bin/root.exe -l -b -q MakeMeAClass.C\\(\\\""
+    dothisatprompt = "$ROOTSYS/$ROOT_SUBDIR/bin/root  -l -b -q MakeMeAClass.C\\(\\\""
+    #dothisatprompt = "/Applications/root_v6.06.02/bin/root.exe -l -b -q MakeMeAClass.C\\(\\\""
 else: 
-    dothisatprompt = "/usr/bin/root.exe -l -b -q MakeMeAClass.C\\(\\\""
+    dothisatprompt = "root -l -b -q MakeMeAClass.C\\(\\\""
 dothisatprompt = dothisatprompt + _fileloctree + "\\\",\\\"" + _mytag + "\\\"\\)"
 os.system(dothisatprompt)
 if _verbosity == 1:
@@ -426,9 +427,10 @@ if _debug > 0:
 if _verbosity == 1:
     os.system("more RunTreeMacro.C")
 if _debug==28:
-    dothisatprompt = "/Applications/root_v6.06.02/bin/root.exe -l -q RunTreeMacro.C"
+    dothisatprompt = "$ROOTSYS/$ROOT_SUBDIR/bin/root -l -q RunTreeMacro.C"
+    #dothisatprompt = "/Applications/root_v6.06.02/bin/root.exe -l -q RunTreeMacro.C"
 else:
-    dothisatprompt = "/usr/bin/root.exe -l -q RunTreeMacro.C"
+    dothisatprompt = "root -l -q RunTreeMacro.C"
 os.system(dothisatprompt)
 os.system("rm RunTreeMacro.C")
 

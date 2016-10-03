@@ -1,7 +1,7 @@
 #include "TFile.h"
 #include "TTree.h"
 
-void MakeMeAClass(char filename[500], char mytag[100])
+void MakeMeAClass(const char *filename, const char *mytag)
 {
   char saythis[500];
 
