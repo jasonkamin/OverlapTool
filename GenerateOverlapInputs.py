@@ -77,7 +77,6 @@ os.system("cp ./utils/RestOfCFile2.C .")
 
 if _debug==28:
     dothisatprompt = "$ROOTSYS/$ROOT_SUBDIR/bin/root  -l -b -q MakeMeAClass.C\\(\\\""
-    #dothisatprompt = "/Applications/root_v6.06.02/bin/root.exe -l -b -q MakeMeAClass.C\\(\\\""
 else: 
     dothisatprompt = "root -l -b -q MakeMeAClass.C\\(\\\""
 dothisatprompt = dothisatprompt + _fileloctree + "\\\",\\\"" + _mytag + "\\\"\\)"
@@ -119,6 +118,24 @@ for line in my_C_file:
         storeforlater1 = line
         continue
     if "void LoopForOverlaps__" in line:
+        my_new_C_file.write("#include \"TROOT.h\"\n")
+        my_new_C_file.write("#include \"TStyle.h\"\n")
+        my_new_C_file.write("#include \"TFile.h\"\n")
+        my_new_C_file.write("#include \"TNtuple.h\"\n")
+        my_new_C_file.write("#include \"TF1.h\"\n")
+        my_new_C_file.write("#include \"TRandom3.h\"\n")
+        my_new_C_file.write("#include \"TVector3.h\"\n")
+        my_new_C_file.write("#include \"TRotation.h\"\n")
+        my_new_C_file.write("#include \"TLorentzVector.h\"\n")
+        my_new_C_file.write("#include \"TBox.h\"\n")
+        my_new_C_file.write("#include \"TLine.h\"\n\n")
+
+        my_new_C_file.write("#include <iostream>\n")
+        my_new_C_file.write("#include <cmath>\n")
+        my_new_C_file.write("#include <unistd.h>\n\n")
+
+        my_new_C_file.write("using namespace std;\n\n")
+
         newline = "#include                       \"" + myoutputfilename1 + "\"\n"
         my_new_C_file.write(newline)
         newline = "const char outputfile[500] = \"Overlaps_" + _mytag      + ".root\";\n"
@@ -428,7 +445,6 @@ if _verbosity == 1:
     os.system("more RunTreeMacro.C")
 if _debug==28:
     dothisatprompt = "$ROOTSYS/$ROOT_SUBDIR/bin/root -l -q RunTreeMacro.C"
-    #dothisatprompt = "/Applications/root_v6.06.02/bin/root.exe -l -q RunTreeMacro.C"
 else:
     dothisatprompt = "root -l -q RunTreeMacro.C"
 os.system(dothisatprompt)
