@@ -19,5 +19,14 @@ optional:    --rate <full_rate>  --nEvents 100  --verbosity <0 or 1>  --debug <0
 
 ```` 
 
+'--mytag' is simply to give the output a unique name.  ie. the output would be called Overlaps_base_output_name.root
+
+'--rate' is your desired raw input collision rate by which the HltTree results get scaled. 
+
+'--HltTreePath' is the path to your root file containing the HltTree. The tree should be in a TDirectory called 'hltbitanalysis'
+
+'--nEvents' is the number of HltTree events you want to run over. 
+
+'--debug', if this is *not* set to 0 then the .C(.h) MakeClass files will be generated but *not* run (you can do it by hand).
 
 Please report bugs/comments to jason.kamin@cern.ch 
