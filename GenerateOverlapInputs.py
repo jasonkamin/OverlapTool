@@ -206,8 +206,17 @@ for line in myfile:
         L1prescales.append(words[i][3])
     FoundL1inList = -1
 
-    #add hlt name to list... 
-    UsedHLTtriggers.append(words[i][0])
+    #add hlt name to list...
+    needtoaddversionNum = 1;
+    for i_v in range(1,20):
+        if words[i][0].endswith("_v"+str(i_v)):
+            needtoaddversionNum = 0
+        elif words[i][0].endswith("_v*"):
+            words[i][0] = words[i][0][:-3]
+    if needtoaddversionNum == 1:
+        UsedHLTtriggers.append(words[i][0]+"_v1")
+    else:
+        UsedHLTtriggers.append(words[i][0])
     L1StringForHlt.append(words[i][1])
     PDForHlt.append(words[i][2])
     if words[i][4] == "0":
@@ -231,7 +240,6 @@ print '\n ... done ! \n'
 
 #finish cleaning up the C file from MakeClass()
 
-  
 if _nEvents == -1:
     my_new_C_file.write("\n\n  Long64_t nentries = fChain->GetEntriesFast();\n");
 else:
