@@ -209,7 +209,7 @@ for line in myfile:
     #add hlt name to list...
     needtoaddversionNum = 1;
     for i_v in range(1,20):
-        if words[i][0].endswith("_v"+str(i_v)):
+        if words[i][0].endswith("_v"+str(i_v)) or words[i][0].endswith("v2"):
             needtoaddversionNum = 0
         elif words[i][0].endswith("_v*"):
             words[i][0] = words[i][0][:-3]

@@ -22,14 +22,17 @@
   Int_t FiredTr_raw[nTriggersHlt] = {0};
   Int_t FiredTr_psc[nTriggersHlt] = {0};
 
-  TH2D *h_L1_L1_raw    = new TH2D("h_L1_L1_raw","h_L1_L1_raw",nTriggers_L1,0.5,nTriggers_L1+0.5, nTriggers_L1,0.5,nTriggers_L1+0.5);
-  TH2D *h_L1_L1_psc    = new TH2D("h_L1_L1_psc","h_L1_L1_psc",nTriggers_L1,0.5,nTriggers_L1+0.5, nTriggers_L1,0.5,nTriggers_L1+0.5);
-  TH2D *h_tr_tr_raw    = new TH2D("h_tr_tr_raw","h_tr_tr_raw",nTriggersHlt,0.5,nTriggersHlt+0.5, nTriggersHlt,0.5,nTriggersHlt+0.5);
-  TH2D *h_tr_tr_psc    = new TH2D("h_tr_tr_psc","h_tr_tr_psc",nTriggersHlt,0.5,nTriggersHlt+0.5, nTriggersHlt,0.5,nTriggersHlt+0.5);
-  TH2D *h_tr_pd_raw    = new TH2D("h_tr_pd_raw","h_tr_pd_raw",nTriggersHlt,0.5,nTriggersHlt+0.5, nPrimaryDSet, 0.5, nPrimaryDSet+0.5);
-  TH2D *h_tr_pd_psc    = new TH2D("h_tr_pd_psc","h_tr_pd_psc",nTriggersHlt,0.5,nTriggersHlt+0.5, nPrimaryDSet, 0.5, nPrimaryDSet+0.5);
-  TH2D *h_pd_pd_raw      = new TH2D("h_pd_pd_raw","h_pd_pd_raw",nPrimaryDSet, 0.5, nPrimaryDSet+0.5, nPrimaryDSet,0.5, nPrimaryDSet+0.5);
-  TH2D *h_pd_pd_psc      = new TH2D("h_pd_pd_psc","h_pd_pd_psc",nPrimaryDSet, 0.5, nPrimaryDSet+0.5, nPrimaryDSet,0.5, nPrimaryDSet+0.5);
+  TH2D *h_L1_L1_raw    = new TH2D("h_L1_L1_raw","h_L1_L1_raw",nTriggers_L1,0.5, nTriggers_L1+0.5, nTriggers_L1,0.5,nTriggers_L1+0.5);
+  TH2D *h_L1_L1_psc    = new TH2D("h_L1_L1_psc","h_L1_L1_psc",nTriggers_L1,0.5, nTriggers_L1+0.5, nTriggers_L1,0.5,nTriggers_L1+0.5);
+  TH2D *h_tr_tr_raw    = new TH2D("h_tr_tr_raw","h_tr_tr_raw",nTriggersHlt,0.5, nTriggersHlt+0.5, nTriggersHlt,0.5,nTriggersHlt+0.5);
+  TH2D *h_tr_tr_psc    = new TH2D("h_tr_tr_psc","h_tr_tr_psc",nTriggersHlt,0.5, nTriggersHlt+0.5, nTriggersHlt,0.5,nTriggersHlt+0.5);
+  TH2D *h_tr_pd_raw    = new TH2D("h_tr_pd_raw","h_tr_pd_raw",nTriggersHlt,0.5, nTriggersHlt+0.5, nPrimaryDSet,0.5,nPrimaryDSet+0.5);
+  TH2D *h_tr_pd_psc    = new TH2D("h_tr_pd_psc","h_tr_pd_psc",nTriggersHlt,0.5, nTriggersHlt+0.5, nPrimaryDSet,0.5,nPrimaryDSet+0.5);
+  TH2D *h_TrPdFrRaw    = new TH2D("h_TrPdFrRaw","h_TrPdFrRaw",nTriggersHlt,0.5, nTriggersHlt+0.5, nPrimaryDSet,0.5,nPrimaryDSet+0.5);
+  TH2D *h_TrPdFrPsc    = new TH2D("h_TrPdFrPsc","h_TrPdFrPsc",nTriggersHlt,0.5, nTriggersHlt+0.5, nPrimaryDSet,0.5,nPrimaryDSet+0.5);
+  TH2D *h_pd_pd_raw    = new TH2D("h_pd_pd_raw","h_pd_pd_raw",nPrimaryDSet,0.5, nPrimaryDSet+0.5, nPrimaryDSet,0.5,nPrimaryDSet+0.5);
+  TH2D *h_pd_pd_psc    = new TH2D("h_pd_pd_psc","h_pd_pd_psc",nPrimaryDSet,0.5, nPrimaryDSet+0.5, nPrimaryDSet,0.5,nPrimaryDSet+0.5);
+
   TH1D *h_TotalEvts      = new TH1D("h_TotalEvts" ,"number of events for each PD;Primary Dataset;",nPrimaryDSet, 0.5, nPrimaryDSet+0.5);
   TH1D *h_UniqueEvts     = new TH1D("h_UniqueEvts","number of unique events for each PD;Primary Dataset;",nPrimaryDSet, 0.5, nPrimaryDSet+0.5);
   TH1D *h_UniqueEffs     = new TH1D("h_UniqueEffs","Unique Efficiency for each PD;Primary Dataset;",nPrimaryDSet, 0.5, nPrimaryDSet+0.5);
@@ -128,7 +131,9 @@
     if(ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
 
-    if(Int_t(0.1*Float_t(nentries))%Int_t(jentry+1) == 0)
-      cout << " evt " << jentry << endl;
+    if(Int_t(jentry)%Int_t(0.1*nentries) == 0)
+      cout << endl << " evt " << jentry << " / " << nentries << "  (" << 100.0*Double_t(jentry)/Double_t(nentries) << "%) ";
+    else if(Int_t(jentry)%Int_t(0.01*nentries) == 0)
+      cout << "."<< flush;
 
 

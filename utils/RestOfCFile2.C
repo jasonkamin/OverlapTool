@@ -221,6 +221,9 @@
     else                       sprintf(saythis5,"%5d",Int_t(PreScaleHlt[i]));
     if(PreScale_L1[L1PathForHLT[i]]>199999)  sprintf(saythis6,"  2e5");
     else                                     sprintf(saythis6,"%5d",Int_t(PreScale_L1[L1PathForHLT[i]]));
+    //if(i>0)
+    //  if(PDForHltID[i]!=PDForHltID[i-1])
+    //    cout << endl << endl;
     cout << saythis << "  |   " << saythis1  << "    |   " << saythis6  << "   |   " << saythis2  << "    |   " << saythis5  << "   |   " << saythis3 << "    |   " << saythis7 << "    |   " << endl;
   }
   cout << " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << endl;
@@ -328,6 +331,30 @@
     DiagonalBox[i] ->Draw("same");
   }
 
+  //calculate fractions inside h_tr_pd_raw
+  std::vector<float> entries;
+  double max = 0.;
+  //h_TrPdFrRaw = dynamic_cast<TH2D*>(h_tr_pd_raw->Clone("hFractionsRaw"));
+  h_TrPdFrRaw->Reset();
+  for(int i = 1; i<=h_tr_pd_raw->GetXaxis()->GetNbins(); ++i) {
+    max = 0.;
+    for(int j = 1; j<=h_tr_pd_raw->GetYaxis()->GetNbins(); ++j) {
+      double cur = h_tr_pd_raw->GetBinContent(i,j);
+      entries.push_back(cur);
+      if(cur>max) max = cur;
+    }
+    for(int j = 1; j<=h_tr_pd_raw->GetYaxis()->GetNbins(); ++j) {
+      if(max>0.)
+        h_TrPdFrRaw->SetBinContent(i,j,entries[j-1]/max);
+      else
+        h_TrPdFrRaw->SetBinContent(i,j,0.);
+    }
+    entries.clear();
+  }
+  gStyle->SetPaintTextFormat("4.2f");
+  h_TrPdFrRaw->Draw("TEXT0 same");
+
+
   TCanvas *c1_psc = new TCanvas("c1_psc","c1_psc",1000,600);
   c1_psc->SetLeftMargin(0.18);
   c1_psc->SetLogz();
@@ -337,6 +364,30 @@
     line_PDEdges[i]->Draw("same");
     DiagonalBox[i] ->Draw("same");
   }
+
+  //calculate fractions inside h_tr_pd_psc
+  entries.clear();
+  max = 0.;
+  //h_TrPdFrpsc = dynamic_cast<TH2D*>(h_tr_pd_psc->Clone("hFractionspsc"));
+  h_TrPdFrPsc->Reset();
+  for(int i = 1; i<=h_tr_pd_psc->GetXaxis()->GetNbins(); ++i) {
+    max = 0.;
+    for(int j = 1; j<=h_tr_pd_psc->GetYaxis()->GetNbins(); ++j) {
+      double cur = h_tr_pd_psc->GetBinContent(i,j);
+      entries.push_back(cur);
+      if(cur>max) max = cur;
+    }
+    for(int j = 1; j<=h_tr_pd_psc->GetYaxis()->GetNbins(); ++j) {
+      if(max>0.)
+        h_TrPdFrPsc->SetBinContent(i,j,entries[j-1]/max);
+      else
+        h_TrPdFrPsc->SetBinContent(i,j,0.);
+    }
+    entries.clear();
+  }
+  gStyle->SetPaintTextFormat("4.2f");
+  h_TrPdFrPsc->Draw("TEXT0 same");
+
 
   TCanvas *c1_rates = new TCanvas("c1_rates","c1_rates",800,800);
   c1_rates->Divide(2,2);
