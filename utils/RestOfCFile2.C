@@ -159,9 +159,9 @@
   //################################################################
   // Print the L1 Rates.... 
 
-  cout << "_________________________________________________________________________________________________________________________" << endl;
-  cout << "                  TRIGGER STRING                                 |   Raw evts  | PreScale  | Scaled Evts  |     Rate     " << endl;
-  cout << " --------------------------------------------------------------- | ----------- | --------  | -----------  | -----------  " << endl;
+  cout << "__________________________________________________________________________________________________________________________ " << endl;
+  cout << "                  TRIGGER STRING                                 |   Raw evts  | PreScale  | Scaled Evts  |     Rate       " << endl;
+  cout << " --------------------------------------------------------------- | ----------- | --------  | -----------  | -------------  " << endl;
 
   for(int i=0; i<nTriggers_L1; i++){
     //if(PreScale_L1[i]>1e8)
@@ -169,23 +169,27 @@
     sprintf(saythis, "%63s", TrStrings_L1[i]);
     sprintf(saythis1,"%6d",  nEvts_L1_raw[i]);
     sprintf(saythis2,"%6d",  nEvts_L1_psc[i]);
-    sprintf(saythis7,"%6d",  int(nEvts_L1_psc[i]*FullRate/evtCount));
+    Double_t quickrate = Double_t(nEvts_L1_psc[i])*FullRate/Double_t(evtCount);
+    if(quickrate>10.0)
+      sprintf(saythis7,"%6d  ",  int(quickrate));
+    else
+      sprintf(saythis7,"  %6.1f",  quickrate);
     if(PreScale_L1[i]>199999)  sprintf(saythis3,"  2e5");
     else                       sprintf(saythis3,"%5.0d",Int_t(PreScale_L1[i]));
-    cout << saythis << "  |   " << saythis1  << "    |   " << saythis3  << "   |   " << saythis2  << "   |   " << saythis7  << "   " << endl;
+    cout << saythis << "  |   " << saythis1  << "    |   " << saythis3  << "   |   " << saythis2  << "     |   " << saythis7  << "   " << endl;
   }
-  cout << " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -" << endl;
+  cout << " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -" << endl;
   sprintf(saythis1,"%6d",  SumOfEvt_L1_raw);
   sprintf(saythis2,"%6d",  SumOfEvt_L1_psc);
   sprintf(saythis3,"%6d",  TotalEvt_L1_raw);
   sprintf(saythis4,"%6d",  TotalEvt_L1_psc);
   sprintf(saythis5,"%4.3f",  double(TotalEvt_L1_raw)/double(SumOfEvt_L1_raw));
   sprintf(saythis6,"%4.3f",  double(TotalEvt_L1_psc)/double(SumOfEvt_L1_psc));
-  sprintf(saythis7,"%6d",  int(TotalEvt_L1_psc*FullRate/evtCount));
-  cout << "                  SIMPLE SUM                                     |   " << saythis1  << "  |           |   " << saythis2  << "   " << endl;
-  cout << "             ACTUAL AFTER OVERLAPS                               |   " << saythis3  << "    |           |   " << saythis4  << "    | " << saythis7 << "   " << endl;
+  sprintf(saythis7,"%6d",  int(TotalEvt_L1_psc*FullRate/Double_t(evtCount)));
+  cout << "                  SIMPLE SUM                                     |   " << saythis1  << "    |           |   " << saythis2  << "   " << endl;
+  cout << "             ACTUAL AFTER OVERLAPS                               |   " << saythis3  << "    |           |   " << saythis4  << "    |    " << saythis7 << "   " << endl;
   cout << "             Ratio of simple_sum/total                           |~   " << saythis5  << "   ~|           |~  " << saythis6  << "  ~" << endl;
-  cout << "_________________________________________________________________________________________________________________________" << endl;
+  cout << "___________________________________________________________________________________________________________________________" << endl;
   cout << endl;
   //
   //################################################################
@@ -197,9 +201,9 @@
   // Print the HLT Rates.... 
 
   cout << endl;
-  cout << "__________________________________________________________________________________________________________________________________________________   " << endl;
-  cout << "                  TRIGGER STRING                                 |  NoPS Evts  | L1 pScale | Fed HLT Evts| HLT pScale|  Rec Events |     Rate    |   " << endl;
-  cout << " --------------------------------------------------------------- | ----------- | --------- | ----------- | --------- | ----------- | ----------- |   " << endl;
+  cout << "____________________________________________________________________________________________________________________________________________________   " << endl;
+  cout << "                  TRIGGER STRING                                 |  NoPS Evts  | L1 pScale | Fed HLT Evts| HLT pScale|  Rec Events |      Rate     |   " << endl;
+  cout << " --------------------------------------------------------------- | ----------- | --------- | ----------- | --------- | ----------- | ------------- |   " << endl;
 
   for(int i=0; i<nTriggersHlt; i++){
     if(PreScaleHlt[i]>1e8)
@@ -208,14 +212,18 @@
     sprintf(saythis1,"%6d",  nEvtsHlt_ps1[i]);
     sprintf(saythis2,"%6d",  nEvtsHlt_raw[i]);
     sprintf(saythis3,"%6d",  nEvtsHlt_psc[i]);
-    sprintf(saythis7,"%6d",  int(nEvtsHlt_psc[i]*FullRate/evtCount));
+    Double_t quickrate = Double_t(nEvtsHlt_psc[i])*FullRate/Double_t(evtCount);
+    if(quickrate>10.0)
+      sprintf(saythis7,"%6d  ",  int(quickrate));
+    else
+      sprintf(saythis7,"  %6.1f",  quickrate);
     if(PreScaleHlt[i]>199999)  sprintf(saythis5,"  2e5");
     else                       sprintf(saythis5,"%5d",Int_t(PreScaleHlt[i]));
     if(PreScale_L1[L1PathForHLT[i]]>199999)  sprintf(saythis6,"  2e5");
     else                                     sprintf(saythis6,"%5d",Int_t(PreScale_L1[L1PathForHLT[i]]));
     cout << saythis << "  |   " << saythis1  << "    |   " << saythis6  << "   |   " << saythis2  << "    |   " << saythis5  << "   |   " << saythis3 << "    |   " << saythis7 << "    |   " << endl;
   }
-  cout << " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << endl;
+  cout << " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << endl;
   sprintf(saythis1,"%6d",  SumOfEvtHlt_raw);
   sprintf(saythis2,"%4d",  SumOfEvtHlt_psc);
   sprintf(saythis3,"%6d",  TotalEvtHlt_raw);
@@ -223,10 +231,10 @@
   sprintf(saythis5,"%4.3f",  double(TotalEvtHlt_raw)/double(SumOfEvtHlt_raw));
   sprintf(saythis6,"%4.3f",  double(TotalEvtHlt_psc)/double(SumOfEvtHlt_psc));
   sprintf(saythis7,"%6d",  int(TotalEvtHlt_psc*FullRate/evtCount));
-  cout << "                     SIMPLE SUM                                                            |   " << saythis1  << "   |           |   " << saythis2  << "   " << endl;
-  cout << "                ACTUAL AFTER OVERLAPS                                                      |   " << saythis3  << "    |           |   " << saythis4  << "    | " << saythis7 << endl;
+  cout << "                     SIMPLE SUM                                                            |   " << saythis1  << "    |           |   " << saythis2  << "   " << endl;
+  cout << "                ACTUAL AFTER OVERLAPS                                                      |   " << saythis3  << "    |           |   " << saythis4  << "    |    " << saythis7 << endl;
   cout << "                Ratio of simple_sum/total                                                  |~   " << saythis5  << "   ~|           |~  " << saythis6  << "  ~" << endl;
-  cout << "_____________________________________________________________________________________________________________________________________________  " << endl;
+  cout << "_______________________________________________________________________________________________________________________________________________  " << endl;
   cout << endl;
   //################################################################
   // Print the L1 Rates.... 

@@ -3,6 +3,12 @@
 # Created Oct 2016.
 # For run preparation studies for the upcoming pPb run.
 # 
+# debug:
+# 0-  run normally, automatic output root file. 
+# 1-  run normally, don't run MakeClass (must be done by hand).
+# 28- same as option 1, but loads root on Jason's local computer.
+# 29- same as 28, but also runs the MakClass
+# 
 # -Jason Kamin 1.Oct.2016
 
 import os
@@ -14,7 +20,7 @@ _debug = 0;
 _verbosity = 0;
 _nEvents = -1;
 _mytag = "N_U_L_L";
-_inputrate = 1000;
+_inputrate = 1000000;
 _fileloctree = "N_U_L_L";
 
 for i in range(0,len(_j_args)):
@@ -75,7 +81,7 @@ os.system("cp ./utils/MakeMeAClass.C .")
 os.system("cp ./utils/RestOfCFile1.C .")
 os.system("cp ./utils/RestOfCFile2.C .")
 
-if _debug==28:
+if _debug==28 or _debug==29:
     dothisatprompt = "$ROOTSYS/$ROOT_SUBDIR/bin/root  -l -b -q MakeMeAClass.C\\(\\\""
 else: 
     dothisatprompt = "root -l -b -q MakeMeAClass.C\\(\\\""
@@ -427,7 +433,7 @@ myquickrootmacro.write("  return;\n")
 myquickrootmacro.write("}\n")
 myquickrootmacro.close()
 
-if _debug > 0:
+if (_debug > 0)and(_debug<29):
     print "\n\n"
     print "_________________________________________________"
     linecounter = 0;
@@ -443,7 +449,7 @@ if _debug > 0:
 
 if _verbosity == 1:
     os.system("more RunTreeMacro.C")
-if _debug==28:
+if _debug==28 or _debug==29:
     dothisatprompt = "$ROOTSYS/$ROOT_SUBDIR/bin/root -l -q RunTreeMacro.C"
 else:
     dothisatprompt = "root -l -q RunTreeMacro.C"
