@@ -62,10 +62,10 @@ HLT_PAL2DoubleMu10_v1                            L1_DoubleMu10_BptxAND	       PA
 HLT_PAL3DoubleMu10_v1                            L1_DoubleMu10_BptxAND	       PADoubleMuon	            1    1
 #CORR/FLOW																					
 HLT_PAFullTracks_Multiplicity120	               L1_MinimumBiasHF0_OR_BptxAND	 PAHighMultiplicity0	  	40				1
+HLT_PAFullTracks_Multiplicity120_HighPt8	       L1_MinimumBiasHF0_OR_BptxAND	 PAHighMultiplicity0	  	40		  	1
+HLT_PAFullTracks_Multiplicity120_HighPt16	       L1_SingleJet12_BptxAND	       PAHighMultiplicity0	  	20		  	1
 HLT_PAFullTracks_Multiplicity150	               L1_MinimumBiasHF0_OR_BptxAND	 PAHighMultiplicity0	  	40				1
 HLT_PAFullTracks_Multiplicity185	               L1_TowerCount62_BptxAND	     PAHighMultiplicity1-6		1         1
 HLT_PAFullTracks_Multiplicity220	               L1_TowerCount74_BptxAND	     PAHighMultiplicity7	  	1  	      1
 HLT_PAFullTracks_Multiplicity250	               L1_TowerCount74_BptxAND	     PAHighMultiplicity7	  	1         1
 HLT_PAFullTracks_Multiplicity280	               L1_TowerCount74_BptxAND	     PAHighMultiplicity7	  	1  	      1
-HLT_PAFullTracks_Multiplicity120_HighPt8	       L1_MinimumBiasHF0_OR_BptxAND	 PAHighMultiplicity0	  	40		  	1
-HLT_PAFullTracks_Multiplicity120_HighPt16	       L1_SingleJet12_BptxAND	       PAHighMultiplicity0	  	20		  	1
