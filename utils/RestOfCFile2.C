@@ -410,6 +410,8 @@
   h_tr_pd_psc->Write();
   h_pd_pd_raw->Write();
   h_pd_pd_psc->Write();
+  h_TrPdFrRaw->Write();
+  h_TrPdFrPsc->Write();
   h_TotalEvts->Write();
   h_UniqueEvts->Write();
   h_UniqueEffs->Write();
