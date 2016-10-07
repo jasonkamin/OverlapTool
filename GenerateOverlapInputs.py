@@ -157,6 +157,34 @@ for line in my_C_file:
 #we'll finish this job up in a bit... 
 
 
+#make list of tree variables
+rootfilefortree = open("ReadTreeVars_tmp.C",'w')
+rootfilefortree.write("#include \"TFile.h\"\n")
+rootfilefortree.write("#include \"TTree.h\"\n\n")
+rootfilefortree.write("void MakeTreeVars_tmp(const char *filename)\n\n")
+rootfilefortree.write("{\n")
+rootfilefortree.write("  char saythis[500];\n\n")
+rootfilefortree.write("  TFile *f1 = TFile::Open(filename);\n")
+rootfilefortree.write("  TTree *HltTree = (TTree*)f1->GetDirectory(\"hltbitanalysis\")->Get(\"HltTree\");\n")
+rootfilefortree.write("  HltTree->Show();\n\n")
+rootfilefortree.write("  return;\n")
+rootfilefortree.write("}\n")
+if _debug==28 or _debug==29:
+    dothisatprompt = "$ROOTSYS/$ROOT_SUBDIR/bin/root -l -q MakeTreeVars_tmp.C\(\\\"~/Desktop/hlt_EPOS_Official10MPartStat_merged.root\\\"\\) | grep -v _Prescl | grep HLT > TreeVarsTmp.txt"
+else: 
+    dothisatprompt = "root -l -q MakeTreeVars_tmp.C\(\\\"~/Desktop/hlt_EPOS_Official10MPartStat_merged.root\\\"\\) | grep -v _Prescl | grep HLT > TreeVarsTmp.txt"
+os.system(dothisatprompt)
+os.system("rm ReadTreeVars_tmp.C")
+
+filefortreevars = open("TreeVarsTmp.txt",'r')
+AllHltsInTree = [];
+for line in filefortreevars:
+    splitline = line.split()
+    AllHltsInTree.append(splitline[0])
+os.system("rm TreeVarsTmp.txt")
+
+
+#read in the text input file, fill variables... 
 myfile = open(_myprescaleinputfile, 'r')
 
 words = [];
@@ -172,10 +200,10 @@ L1StringForHlt = [];
 PDForHlt = [];
 
 L1sAreFuckedUp = 0;
-
+GarbageTriggerIndex = [];
 
 print '\n'
-i=0
+i=0;
 for line in myfile:
     splitline = line.split()
     if len(splitline)<1:
@@ -210,17 +238,44 @@ for line in myfile:
         L1prescales.append(words[i][3])
     FoundL1inList = -1
 
-    #add hlt name to list...
-    needtoaddversionNum = 1;
-    for i_v in range(1,20):
-        if words[i][0].endswith("_v"+str(i_v)) or words[i][0].endswith("v2"):
-            needtoaddversionNum = 0
-        elif words[i][0].endswith("_v*"):
-            words[i][0] = words[i][0][:-3]
-    if needtoaddversionNum == 1:
-        UsedHLTtriggers.append(words[i][0]+"_v1")
-    else:
-        UsedHLTtriggers.append(words[i][0])
+    #check if hlt exists in tree and then
+    #try to find some similar name if it doesn't
+    itDOESexist = 0;
+    StringContainsVersionNum = 0
+    for k in range(0,len(AllHltsInTree)):
+        if words[i][0] == AllHltsInTree[k]:
+            itDOESexist = 1
+    if itDOESexist == 0:
+        print "warning:: ",words[i][0],"    is NOT in HltTree !! (will look for something similar in tree...)"
+        for i_v in range(1,20):
+            if words[i][0].endswith("_v"+str(i_v)):
+                StringContainsVersionNum = 1
+                break
+        if StringContainsVersionNum == 1:
+            for k in range(0,len(AllHltsInTree)):
+                if words[i][0][:-3] == AllHltsInTree[k][:-3]:
+                    print "    found ",AllHltsInTree[k]," ... will replace input string."
+                    words[i][0] = AllHltsInTree[k]
+                    itDOESexist = 1
+                    break
+        elif StringContainsVersionNum == 0 and itDOESexist == 0:
+            for k in range(0,len(AllHltsInTree)):
+                if words[i][0] == AllHltsInTree[k][:-3]:
+                    print "    found ",AllHltsInTree[k]," ... will replace input string."
+                    words[i][0] = AllHltsInTree[k]
+                    itDOESexist = 1
+                    break
+    if itDOESexist == 0:
+        GarbageTriggerIndex.append(i)
+        print "\n\n  =============================================================="
+        print     "  || !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        print     "  || Couldn't find anything matching in Tree... will bail out !"
+        print     "  || Please check ",words[i][0]
+        print     "  || !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        print    "  ==============================================================\n"
+        _bail_out = 1;
+
+    UsedHLTtriggers.append(words[i][0])
     L1StringForHlt.append(words[i][1])
     PDForHlt.append(words[i][2])
     if words[i][4] == "0":
@@ -239,16 +294,23 @@ if L1sAreFuckedUp == 1:
     print 'L1\'s don\'t match somewhere !!'
     sys.exit(0)
 
+if _bail_out == 1:
+    print "\nSome input trigger strings are not in the HltTree, check your inputs !"
+    print "Specifically:"
+
+    for i in range(0,len(GarbageTriggerIndex)):
+        print " ",words[GarbageTriggerIndex[i]][0]
+    print "\n"
+    sys.exit(0)
+
 print '\n ... done ! \n'
 
 
 #finish cleaning up the C file from MakeClass()
-
 if _nEvents == -1:
     my_new_C_file.write("\n\n  Long64_t nentries = fChain->GetEntriesFast();\n");
 else:
     my_new_C_file.write("\n\n  Long64_t nentries = " + _nEvents + ";\n");
-
 restofcfile = open("RestOfCFile1.C", 'r')
 for line in restofcfile:
     my_new_C_file.write(line)
@@ -275,7 +337,6 @@ for i in range(0,len(UsedHLTtriggers)):
         my_new_C_file.write(",\n")
     else:
         my_new_C_file.write("\n  };\n\n")
-
 
 my_new_C_file.write("    Int_t MyL1ForHlt[] = {\n")
 for i in range(0,len(L1StringForHlt)):
