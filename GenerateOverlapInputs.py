@@ -304,7 +304,7 @@ print '\n ... done ! \n'
 
 #finish cleaning up the C file from MakeClass()
 my_new_C_file.write("\n\n  Long64_t nentries = fChain->GetEntriesFast();\n");
-my_new_C_file.write("  Long64_t Userentries = " + _nEvents + ";\n");
+my_new_C_file.write("  Long64_t Userentries = " + str(_nEvents) + ";\n");
 my_new_C_file.write("  if(Userentries>0 && Userentries<nentries) nentries = Userentries;\n");
 restofcfile = open("RestOfCFile1.C", 'r')
 for line in restofcfile:
