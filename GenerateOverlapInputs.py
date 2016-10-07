@@ -53,6 +53,8 @@ else:
     testinputfile = open(_j_args[1],'r')
     for line in testinputfile:
         splitline = line.split()
+        if len(splitline)<1:
+            continue
         if splitline[0].startswith("#") == True:
             continue
         elif len(splitline) != 5:
@@ -176,6 +178,8 @@ print '\n'
 i=0
 for line in myfile:
     splitline = line.split()
+    if len(splitline)<1:
+        continue
     words.append(splitline)
     if words[i][0].startswith("#") == True:
         i=i+1
