@@ -1,7 +1,5 @@
 
 
-  //Long64_t nentries = fChain->GetEntriesFast();
-
   Int_t nEvts_L1_raw[nTriggers_L1] = {0};
   Int_t nEvtsHlt_raw[nTriggersHlt] = {0};
   Int_t nEvtsHlt_ps1[nTriggersHlt] = {0};

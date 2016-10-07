@@ -66,7 +66,7 @@ if _bail_out == 1:
     print "\nHand me more arguments!"
     print "eg. like this: \n"
     print "./GenerateOverlapInputs.py <file_with_HLTs_and_PSs> --mytag <base_output_name> --rate <full_rate> --HltTreePath <path_to_HltTree_file> "
-    print "optional:    --nEvents 100 --verbosity <0 or 1> --debug <0 or 1> \n"
+    print "optional:    --nEvents 100 --verbosity <0 or 1> --debug <0 or 1> --customrootpath <path_to_root>\n"
     print "... quitting... \n"
     sys.exit(0)
 elif _bail_out == 2:
@@ -303,10 +303,9 @@ print '\n ... done ! \n'
 
 
 #finish cleaning up the C file from MakeClass()
-if _nEvents == -1:
-    my_new_C_file.write("\n\n  Long64_t nentries = fChain->GetEntriesFast();\n");
-else:
-    my_new_C_file.write("\n\n  Long64_t nentries = " + _nEvents + ";\n");
+my_new_C_file.write("\n\n  Long64_t nentries = fChain->GetEntriesFast();\n");
+my_new_C_file.write("  Long64_t Userentries = " + _nEvents + ";\n");
+my_new_C_file.write("  if(Userentries>0 && Userentries<nentries) nentries = Userentries;\n");
 restofcfile = open("RestOfCFile1.C", 'r')
 for line in restofcfile:
     my_new_C_file.write(line)
