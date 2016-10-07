@@ -5,9 +5,8 @@
 # 
 # debug:
 # 0-  run normally, automatic output root file. 
-# 1-  run normally, don't run MakeClass (must be done by hand).
-# 28- same as option 1, but loads root on Jason's local computer.
-# 29- same as 28, but also runs the MakClass
+# 1-  run normally, don't run MakeClass 
+#     (must subsequently be run by hand).
 # 
 # -Jason Kamin 1.Oct.2016
 
@@ -22,6 +21,7 @@ _nEvents = -1;
 _mytag = "N_U_L_L";
 _inputrate = 1000000;
 _fileloctree = "N_U_L_L";
+_myrootpath = "root";
 
 for i in range(0,len(_j_args)):
     if _j_args[i] == "--HltTreePath":
@@ -36,6 +36,8 @@ for i in range(0,len(_j_args)):
         _debug = int(_j_args[i+1])
     if _j_args[i] == "--verbosity":
         _verbosity = int(_j_args[i+1])
+    if _j_args[i] == "--customrootpath":
+        _myrootpath = _j_args[i+1]
 
 _bail_out = 0;
 
@@ -83,11 +85,7 @@ os.system("cp ./utils/MakeMeAClass.C .")
 os.system("cp ./utils/RestOfCFile1.C .")
 os.system("cp ./utils/RestOfCFile2.C .")
 
-if _debug==28 or _debug==29:
-    dothisatprompt = "$ROOTSYS/$ROOT_SUBDIR/bin/root  -l -b -q MakeMeAClass.C\\(\\\""
-else: 
-    dothisatprompt = "root -l -b -q MakeMeAClass.C\\(\\\""
-dothisatprompt = dothisatprompt + _fileloctree + "\\\",\\\"" + _mytag + "\\\"\\)"
+dothisatprompt = _myrootpath+"  -l -b -q MakeMeAClass.C\\(\\\"" + _fileloctree + "\\\",\\\"" + _mytag + "\\\"\\)"
 os.system(dothisatprompt)
 if _verbosity == 1:
     print dothisatprompt
@@ -169,10 +167,8 @@ rootfilefortree.write("  TTree *HltTree = (TTree*)f1->GetDirectory(\"hltbitanaly
 rootfilefortree.write("  HltTree->Show();\n\n")
 rootfilefortree.write("  return;\n")
 rootfilefortree.write("}\n")
-if _debug==28 or _debug==29:
-    dothisatprompt = "$ROOTSYS/$ROOT_SUBDIR/bin/root -l -q MakeTreeVars_tmp.C\(\\\"~/Desktop/hlt_EPOS_Official10MPartStat_merged.root\\\"\\) | grep -v _Prescl | grep HLT > TreeVarsTmp.txt"
-else: 
-    dothisatprompt = "root -l -q MakeTreeVars_tmp.C\(\\\"~/Desktop/hlt_EPOS_Official10MPartStat_merged.root\\\"\\) | grep -v _Prescl | grep HLT > TreeVarsTmp.txt"
+
+dothisatprompt = _myrootpath+" -l -q MakeTreeVars_tmp.C\(\\\"~/Desktop/hlt_EPOS_Official10MPartStat_merged.root\\\"\\) | grep -v _Prescl | grep HLT > TreeVarsTmp.txt"
 os.system(dothisatprompt)
 os.system("rm ReadTreeVars_tmp.C")
 
@@ -506,7 +502,7 @@ myquickrootmacro.write("  return;\n")
 myquickrootmacro.write("}\n")
 myquickrootmacro.close()
 
-if (_debug > 0)and(_debug<29):
+if _debug > 0:
     print "\n\n"
     print "_________________________________________________"
     linecounter = 0;
@@ -522,10 +518,7 @@ if (_debug > 0)and(_debug<29):
 
 if _verbosity == 1:
     os.system("more RunTreeMacro.C")
-if _debug==28 or _debug==29:
-    dothisatprompt = "$ROOTSYS/$ROOT_SUBDIR/bin/root -l -q RunTreeMacro.C"
-else:
-    dothisatprompt = "root -l -q RunTreeMacro.C"
+dothisatprompt = _myrootpath+" -l -q RunTreeMacro.C"
 os.system(dothisatprompt)
 os.system("rm RunTreeMacro.C")
 
