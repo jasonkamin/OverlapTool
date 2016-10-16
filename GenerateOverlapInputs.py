@@ -156,7 +156,7 @@ for line in my_C_file:
 
 
 #make list of tree variables
-rootfilefortree = open("ReadTreeVars_tmp.C",'w')
+rootfilefortree = open("MakeTreeVars_tmp.C",'w')
 rootfilefortree.write("#include \"TFile.h\"\n")
 rootfilefortree.write("#include \"TTree.h\"\n\n")
 rootfilefortree.write("void MakeTreeVars_tmp(const char *filename)\n\n")
@@ -167,16 +167,18 @@ rootfilefortree.write("  TTree *HltTree = (TTree*)f1->GetDirectory(\"hltbitanaly
 rootfilefortree.write("  HltTree->Show();\n\n")
 rootfilefortree.write("  return;\n")
 rootfilefortree.write("}\n")
+rootfilefortree.close()
 
 dothisatprompt = _myrootpath+" -l -q MakeTreeVars_tmp.C\(\\\"~/Desktop/hlt_EPOS_Official10MPartStat_merged.root\\\"\\) | grep -v _Prescl | grep HLT > TreeVarsTmp.txt"
 os.system(dothisatprompt)
-os.system("rm ReadTreeVars_tmp.C")
+os.system("rm MakeTreeVars_tmp.C")
 
 filefortreevars = open("TreeVarsTmp.txt",'r')
 AllHltsInTree = [];
 for line in filefortreevars:
     splitline = line.split()
     AllHltsInTree.append(splitline[0])
+filefortreevars.close()
 os.system("rm TreeVarsTmp.txt")
 
 
