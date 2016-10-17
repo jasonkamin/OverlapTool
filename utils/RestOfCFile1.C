@@ -20,6 +20,15 @@
   Int_t FiredTr_raw[nTriggersHlt] = {0};
   Int_t FiredTr_psc[nTriggersHlt] = {0};
 
+  Double_t TotSizeMaxPD_psc[nPrimaryDSet] = {0};
+  Double_t TotSizeAvePD_psc[nPrimaryDSet] = {0};
+  Double_t EvtSizeMaxPD_psc[nPrimaryDSet] = {0};
+  Double_t EvtSizeAvePD_psc[nPrimaryDSet] = {0};
+  Double_t TotSizeMaxPD_raw[nPrimaryDSet] = {0};
+  Double_t TotSizeAvePD_raw[nPrimaryDSet] = {0};
+  Double_t EvtSizeMaxPD_raw[nPrimaryDSet] = {0};
+  Double_t EvtSizeAvePD_raw[nPrimaryDSet] = {0};
+
   TH2D *h_L1_L1_raw    = new TH2D("h_L1_L1_raw","h_L1_L1_raw",nTriggers_L1,0.5, nTriggers_L1+0.5, nTriggers_L1,0.5,nTriggers_L1+0.5);
   TH2D *h_L1_L1_psc    = new TH2D("h_L1_L1_psc","h_L1_L1_psc",nTriggers_L1,0.5, nTriggers_L1+0.5, nTriggers_L1,0.5,nTriggers_L1+0.5);
   TH2D *h_tr_tr_raw    = new TH2D("h_tr_tr_raw","h_tr_tr_raw",nTriggersHlt,0.5, nTriggersHlt+0.5, nTriggersHlt,0.5,nTriggersHlt+0.5);
@@ -31,7 +40,8 @@
   TH2D *h_pd_pd_raw    = new TH2D("h_pd_pd_raw","h_pd_pd_raw",nPrimaryDSet,0.5, nPrimaryDSet+0.5, nPrimaryDSet,0.5,nPrimaryDSet+0.5);
   TH2D *h_pd_pd_psc    = new TH2D("h_pd_pd_psc","h_pd_pd_psc",nPrimaryDSet,0.5, nPrimaryDSet+0.5, nPrimaryDSet,0.5,nPrimaryDSet+0.5);
 
-  TH1D *h_TotalEvts      = new TH1D("h_TotalEvts" ,"number of events for each PD;Primary Dataset;",nPrimaryDSet, 0.5, nPrimaryDSet+0.5);
+  TH1D *h_TotalEvts_psc  = new TH1D("h_TotalEvts_psc" ,"number of PS'ed events for each PD;Primary Dataset;",nPrimaryDSet, 0.5, nPrimaryDSet+0.5);
+  TH1D *h_TotalEvts_raw  = new TH1D("h_TotalEvts_raw" ,"number of raw events for each PD;Primary Dataset;",  nPrimaryDSet, 0.5, nPrimaryDSet+0.5);
   TH1D *h_UniqueEvts     = new TH1D("h_UniqueEvts","number of unique events for each PD;Primary Dataset;",nPrimaryDSet, 0.5, nPrimaryDSet+0.5);
   TH1D *h_UniqueEffs     = new TH1D("h_UniqueEffs","Unique Efficiency for each PD;Primary Dataset;",nPrimaryDSet, 0.5, nPrimaryDSet+0.5);
   TH1D *h_RatesPerPD_psc = new TH1D("h_RatesPerPD_psc","h_RatesPerPD_psc",nPrimaryDSet, 0.5, nPrimaryDSet+0.5);
@@ -81,7 +91,7 @@
     for(int j=0; j<nTriggers_L1; j++)
       if(strcmp(L1StringForHlt[i],TrStrings_L1[j])==0){
         L1PathForHLT[i] = j;
-        cout << j << "	" << TrStrings_L1[j] << "  -->  " << i << " " << TrStringsHlt[i] << endl;
+        cout << j << "	" << TrStrings_L1[j] << "  -->  " << i << " " << TrStringsHlt[i] << " " << EvtSizeHlt[i] << " kb/evt" << endl;
       }
   cout << endl << "__________________________________________________________________________________________________________" << endl;
   cout << endl;

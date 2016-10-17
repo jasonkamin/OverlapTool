@@ -22,6 +22,7 @@ _mytag = "N_U_L_L";
 _inputrate = 1000000;
 _fileloctree = "N_U_L_L";
 _myrootpath = "root";
+_allEvtSize = -1;
 
 for i in range(0,len(_j_args)):
     if _j_args[i] == "--HltTreePath":
@@ -38,6 +39,8 @@ for i in range(0,len(_j_args)):
         _verbosity = int(_j_args[i+1])
     if _j_args[i] == "--customrootpath":
         _myrootpath = _j_args[i+1]
+    if _j_args[i] == "--SetAllEvtSizes":
+        _allEvtSize = _j_args[i+1]
 
 _bail_out = 0;
 
@@ -59,8 +62,11 @@ else:
             continue
         if splitline[0].startswith("#") == True:
             continue
-        elif len(splitline) != 5:
-            _bail_out = 2
+        elif len(splitline) != 6:
+            if len(splitline)==5 and _allEvtSize!=-1:
+                _bail_out = _bail_out
+            else:
+                _bail_out = 2
 
 if _bail_out == 1:
     print "\nHand me more arguments!"
@@ -70,7 +76,15 @@ if _bail_out == 1:
     print "... quitting... \n"
     sys.exit(0)
 elif _bail_out == 2:
-    print "\nCheck input file. It should have 5 columns: \n"
+    print "\nCheck input file. It should have 6 columns: \n"
+    print "#HLT_trigger    L1_seed    PrimaryDataset    L1_prescale    HLT_prescale   Evt_Size_kb/evt"
+    print "#___________    _______    ______________    ___________    ____________   _______________"
+    print "HLT_SingleMu3   L1_Mu3     SingleMuons       2              10             150            "
+    print "etc.... \n"
+
+    print "  OR  "
+
+    print "\nUse option --SetAllEvtSizes <100>  and it can only have 5 columns: \n"
     print "#HLT_trigger    L1_seed    PrimaryDataset    L1_prescale    HLT_prescale "
     print "#___________    _______    ______________    ___________    ____________ "
     print "HLT_SingleMu3   L1_Mu3     SingleMuons       2              10           "
@@ -196,6 +210,7 @@ L1prescales = [];
 HLTprescales = [];
 L1StringForHlt = [];
 PDForHlt = [];
+EvtSizeHlt = [];
 
 L1sAreFuckedUp = 0;
 GarbageTriggerIndex = [];
@@ -279,6 +294,10 @@ for line in myfile:
     if words[i][4] == "0":
         words[i][4] = 200000
     HLTprescales.append(words[i][4])
+    if _allEvtSize == -1:
+        EvtSizeHlt.append(words[i][5])
+    else:
+        EvtSizeHlt.append(_allEvtSize)
 
     i=i+1
 
@@ -460,6 +479,25 @@ for i in range(0,len(HLTprescales)):
     for j in range(0,7-len(str(HLTprescales[i]))):
         myoutputfile1.write(" ")
     if i < len(HLTprescales)-1:
+        myoutputfile1.write(", // \"")
+        myoutputfile1.write(UsedHLTtriggers[i])
+        for j in range(0,63-len(UsedHLTtriggers[i])):
+            myoutputfile1.write(" ")
+        myoutputfile1.write("\",\n")
+    else:
+        myoutputfile1.write("  // \"")
+        myoutputfile1.write(UsedHLTtriggers[i])
+        for j in range(0,63-len(UsedHLTtriggers[i])):
+            myoutputfile1.write(" ")
+        myoutputfile1.write("\"\n};\n\n")
+
+myoutputfile1.write("Double_t EvtSizeHlt[nTriggersHlt] = {\n")
+for i in range(0,len(EvtSizeHlt)):
+    myoutputfile1.write("  ")
+    myoutputfile1.write(str(EvtSizeHlt[i]))
+    for j in range(0,7-len(str(EvtSizeHlt[i]))):
+        myoutputfile1.write(" ")
+    if i < len(EvtSizeHlt)-1:
         myoutputfile1.write(", // \"")
         myoutputfile1.write(UsedHLTtriggers[i])
         for j in range(0,63-len(UsedHLTtriggers[i])):

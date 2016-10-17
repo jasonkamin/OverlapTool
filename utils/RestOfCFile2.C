@@ -18,6 +18,11 @@
       FiredTr_psc[i] = 0;
     }
 
+    Double_t thisEvtSizeAve_psc= 0.0;
+    Double_t thisEvtSizeMax_psc = 0.0;
+    Double_t thisEvtSizeAve_raw = 0.0;
+    Double_t thisEvtSizeMax_raw = 0.0;
+
     for(int i=0; i<nTriggers_L1; i++){
       if(My_L1[i]){
         nEvts_L1_raw[i]++;
@@ -31,6 +36,9 @@
             nEvtsHlt_ps1[j]++;
             FiredTr_raw[j] = 1;
             FiredPD_raw[PDForHltID[j]] = 1;
+            if(EvtSizeHlt[j]>thisEvtSizeMax_raw)
+              thisEvtSizeMax_raw = EvtSizeHlt[j];
+            thisEvtSizeAve_raw  += EvtSizeHlt[j];
           }
 
         if(Int_t(nEvts_L1_raw[i])%Int_t(PreScale_L1[i])==0){
@@ -51,6 +59,9 @@
                 nEvtsHlt_psc[j]++;
                 FiredTr_psc[j] = 1;
                 FiredPD_psc[PDForHltID[j]] = 1;
+                if(EvtSizeHlt[j]>thisEvtSizeMax_psc)
+                  thisEvtSizeMax_psc = EvtSizeHlt[j];
+                thisEvtSizeAve_psc  += EvtSizeHlt[j];
                 if(AlreadyFiredHlt_psc==0) 
                   TotalEvtHlt_psc++;
                 AlreadyFiredHlt_psc++;
@@ -102,6 +113,8 @@
       }
     }
 
+    Int_t NumTrigFired_psc = 0;
+    Int_t NumTrigFired_raw = 0;
     for(int i=0; i<nTriggers_L1; i++){
       if(FiredL1_psc[i]==1)  h_RatesPerL1_psc->Fill(i+1);
       if(FiredL1_raw[i]==1)  h_RatesPerL1_raw->Fill(i+1);
@@ -109,16 +122,22 @@
     for(int i=0; i<nTriggersHlt; i++){
       if(FiredTr_psc[i]==1)  h_RatesPerTr_psc->Fill(i+1);
       if(FiredTr_raw[i]==1)  h_RatesPerTr_raw->Fill(i+1);
+      if(FiredTr_psc[i]==1)  NumTrigFired_psc++;
+      if(FiredTr_raw[i]==1)  NumTrigFired_raw++;
     }
     for(int j=0; j<nPrimaryDSet; j++){
       if(FiredPD_psc[j]==1)  h_RatesPerPD_psc->Fill(j+1);
       if(FiredPD_raw[j]==1)  h_RatesPerPD_raw->Fill(j+1);
     }
+    thisEvtSizeAve_psc = thisEvtSizeAve_psc/double(NumTrigFired_psc);
+    thisEvtSizeAve_raw = thisEvtSizeAve_raw/double(NumTrigFired_raw);
 
     Int_t nPDsFired = 0;
     for(int i=0; i<nPrimaryDSet; i++){
       Int_t nOverlappingPDs = 0;
       if(FiredPD_psc[i]==1){
+        TotSizeMaxPD_psc[i] += thisEvtSizeMax_psc;
+        TotSizeAvePD_psc[i] += thisEvtSizeAve_psc;
         nPDsFired++;
         for(int j=0; j<nPrimaryDSet; j++)
           if(i!=j && FiredPD_psc[j]==1)
@@ -129,6 +148,10 @@
           h_UniqueEffs->Fill(i+1);
         }
       }//FiredPD_psc==1
+      if(FiredPD_raw[i]==1){
+        TotSizeMaxPD_raw[i] += thisEvtSizeMax_raw;
+        TotSizeAvePD_raw[i] += thisEvtSizeAve_raw;
+      }//FiredPD_raw==1
     }//loop over PDs
     h_nPDsFired->Fill(nPDsFired);
 
@@ -145,13 +168,21 @@
   }
 
   h_UniqueEffs->Divide(h_RatesPerPD_psc);
-  for(int i=0; i<nPrimaryDSet; i++)  h_TotalEvts ->SetBinContent(i+1,h_RatesPerPD_psc->GetBinContent(i+1));
+  for(int i=0; i<nPrimaryDSet; i++)  h_TotalEvts_psc ->SetBinContent(i+1,h_RatesPerPD_psc->GetBinContent(i+1));
+  for(int i=0; i<nPrimaryDSet; i++)  h_TotalEvts_raw ->SetBinContent(i+1,h_RatesPerPD_raw->GetBinContent(i+1));
   h_RatesPerPD_psc->Scale(FullRate/Double_t(evtCount));
   h_RatesPerPD_raw->Scale(FullRate/Double_t(evtCount));
   h_RatesPerL1_psc->Scale(FullRate/Double_t(evtCount));
   h_RatesPerL1_raw->Scale(FullRate/Double_t(evtCount));
   h_RatesPerTr_psc->Scale(FullRate/Double_t(evtCount));
   h_RatesPerTr_raw->Scale(FullRate/Double_t(evtCount));
+
+  for(int i=0; i<nPrimaryDSet; i++){
+    EvtSizeMaxPD_psc[i] = TotSizeMaxPD_psc[i]/h_TotalEvts_psc->GetBinContent(i+1);
+    EvtSizeAvePD_psc[i] = TotSizeAvePD_psc[i]/h_TotalEvts_psc->GetBinContent(i+1);
+    EvtSizeMaxPD_raw[i] = TotSizeMaxPD_raw[i]/h_TotalEvts_raw->GetBinContent(i+1);
+    EvtSizeAvePD_raw[i] = TotSizeAvePD_raw[i]/h_TotalEvts_raw->GetBinContent(i+1);
+  }
 
 
   cout << endl << endl;
@@ -266,8 +297,8 @@
 
   cout << endl << "At " << Int_t(FullRate/1000.0) << " kHz : " << endl;
   for(int i=0; i<nPrimaryDSet; i++){
-    h_tr_pd_raw   ->GetYaxis()->SetBinLabel(i+1,PDStrings[i]);
-    h_tr_pd_psc   ->GetYaxis()->SetBinLabel(i+1,PDStrings[i]);
+    h_tr_pd_raw     ->GetYaxis()->SetBinLabel(i+1,PDStrings[i]);
+    h_tr_pd_psc     ->GetYaxis()->SetBinLabel(i+1,PDStrings[i]);
     h_pd_pd_raw     ->GetXaxis()->SetBinLabel(i+1,PDStrings[i]);
     h_pd_pd_psc     ->GetXaxis()->SetBinLabel(i+1,PDStrings[i]);
     h_pd_pd_raw     ->GetYaxis()->SetBinLabel(i+1,PDStrings[i]);
@@ -278,10 +309,22 @@
     h_RatesPerPD_raw->GetXaxis()->SetBinLabel(i+1,PDStrings[i]);
 
     cout << PDStrings[i] << " has a rate of " << Int_t(h_RatesPerPD_psc->GetBinContent(i+1)) << "  Hz\tand has " << 
-      h_UniqueEvts ->GetBinContent(i+1) << "\tunique events out of " << 
-      h_TotalEvts  ->GetBinContent(i+1) << " \tfor and UniqueEff: " << 
-      h_UniqueEffs ->GetBinContent(i+1) << " . " << endl;
+      h_UniqueEvts   ->GetBinContent(i+1) << "\tunique events out of " << 
+      h_TotalEvts_psc->GetBinContent(i+1) << " \tfor and UniqueEff: " << 
+      h_UniqueEffs   ->GetBinContent(i+1) << " . " << endl;
   }
+
+  cout << endl << "   with current prescales:" << endl;
+  for(int i=0; i<nPrimaryDSet; i++){
+    cout << PDStrings[i] << " (" << Int_t(h_RatesPerPD_psc->GetBinContent(i+1)) << " Hz) \thas an estimated average event size " << 
+      EvtSizeAvePD_psc[i] << " kb/evt  --(estimated max evt size ~ " << EvtSizeMaxPD_psc[i] << " kb/evt). " << endl;
+  }
+  cout << endl << "   without prescales:" << endl;
+  for(int i=0; i<nPrimaryDSet; i++){
+    cout << PDStrings[i] << " (" << Int_t(h_RatesPerPD_raw->GetBinContent(i+1)) << " Hz) \thas estimated average event size " << 
+      EvtSizeAvePD_raw[i] << " kb/evt  --(estimated max evt size ~ " << EvtSizeMaxPD_raw[i] << " kb/evt). " << endl;
+  }
+
 
   Int_t TotalEventsStored = Int_t(h_RatesPerPD_psc->Integral(1,nPrimaryDSet)*Double_t(evtCount)/FullRate);
   Int_t RedundantEvents   = TotalEventsStored - h_nPDsFired->Integral(2,-1);
@@ -412,10 +455,11 @@
   h_pd_pd_psc->Write();
   h_TrPdFrRaw->Write();
   h_TrPdFrPsc->Write();
-  h_TotalEvts->Write();
   h_UniqueEvts->Write();
   h_UniqueEffs->Write();
   h_nPDsFired->Write();
+  h_TotalEvts_psc->Write();
+  h_TotalEvts_raw->Write();
   for(int i=0; i<nPrimaryDSet; i++)
     h_PDs_NumOtherPDsFired[i]->Write();
   h_RatesPerPD_psc->Write();

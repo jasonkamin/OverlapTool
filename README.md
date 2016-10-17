@@ -15,19 +15,21 @@ you can run it by
 --HltTreePath <path_to_HltTree_file> 
 
 
-optional:    --rate <full_rate>  --nEvents 100  --verbosity <0 or 1>  --debug <0 or 1>  --customrootpath <path_to_root>
+optional:    --rate <full_rate>  --nEvents 100  --customrootpath <path_to_root>  --SetAllEvtSizes <100>  --verbosity <0 or 1>  --debug <0 or 1>
 
 ```` 
 
 '--mytag' is simply to give the output a unique name.  ie. the output would be called Overlaps_base_output_name.root
 
-'--rate' is your desired raw input collision rate by which the HltTree results get scaled. 
-
 '--HltTreePath' is the path to your root file containing the HltTree. The tree should be in a TDirectory called 'hltbitanalysis'
+
+'--rate' is your desired raw input collision rate by which the HltTree results get scaled. 
 
 '--nEvents' is the number of HltTree events you want to run over. 
 
 '--customrootpath' point to your preferred root installation
+
+'--SetAllEvtSizes' integer that will be used for the average event size of all paths.
 
 '--debug', if this is *not* set to 0 then the .C(.h) MakeClass files will be generated but *not* run (you can do it by hand).
 
