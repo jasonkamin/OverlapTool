@@ -2,6 +2,8 @@
 
 This tool calculates trigger overlaps (and PD overlaps) for a CMS triggering emulator. 
 
+*note: this currently requires that you have the triggers ordered by Primary Dataset. To be remedied in the future!*
+
 To run it, you'll need a text file with triggers, prescales, and PDs in it. 
 see ExampleInputFile.txt
 
@@ -29,7 +31,7 @@ optional:    --rate <full_rate>  --nEvents 100  --customrootpath <path_to_root> 
 
 '--customrootpath' point to your preferred root installation
 
-'--SetAllEvtSizes' integer that will be used for the average event size of all paths.
+'--SetAllEvtSizes' integer that will be used for the average event size of all paths (and you don't need to supply a last column in the input file).
 
 '--debug', if this is *not* set to 0 then the .C(.h) MakeClass files will be generated but *not* run (you can do it by hand).
 
