@@ -73,10 +73,38 @@
   sprintf(saythis,"Rates with PS=1, %d kHz;L1 Trigger;Rate (Hz)",Int_t(FullRate/1000.0));
   h_RatesPerL1_raw->SetTitle(saythis);
 
-  for(int i=0; i<nTriggers_L1; i++)
+  TH1F* h_freq_L1_raw[nTriggers_L1];
+  TH1F* h_freq_L1_psc[nTriggers_L1];
+  TH1F* h_freq_HLT_raw[nTriggersHlt];
+  TH1F* h_freq_HLT_psc[nTriggersHlt];
+
+  for(int i=0; i<nTriggers_L1; i++){
     h_PS_for_trig_L1->SetBinContent(i+1,PreScale_L1[i]);
-  for(int i=0; i<nTriggersHlt; i++)
+
+    sprintf(saythis,"h_freq_L1_raw_%d",i);
+    h_freq_L1_raw[i] = new TH1F(saythis,TrStrings_L1[i],10000,0.5,10000.5);
+    h_freq_L1_raw[i] ->GetXaxis()->SetTitle("N^{raw}_{evts} since trigger last fired (L1)");
+    h_freq_L1_raw[i] ->SetLineColor(1);
+
+    sprintf(saythis,"h_freq_L1_psc_%d",i);
+    h_freq_L1_psc[i] = new TH1F(saythis,TrStrings_L1[i],10000,0.5,10000.5);
+    h_freq_L1_psc[i] ->GetXaxis()->SetTitle("N^{psc}_{evts} since trigger last fired (L1)");
+    h_freq_L1_psc[i] ->SetLineColor(2);
+  }
+
+  for(int i=0; i<nTriggersHlt; i++){
     h_PS_for_trigHlt->SetBinContent(i+1,PreScaleHlt[i]);
+
+    sprintf(saythis,"h_freq_HLT_raw_%d",i);
+    h_freq_HLT_raw[i] = new TH1F(saythis,TrStringsHlt[i],10000,0.5,10000.5);
+    h_freq_HLT_raw[i] ->GetXaxis()->SetTitle("N^{raw}_{evts} since trigger last fired (HLT)");
+    h_freq_HLT_raw[i] ->SetLineColor(4);
+
+    sprintf(saythis,"h_freq_HLT_psc_%d",i);
+    h_freq_HLT_psc[i] = new TH1F(saythis,TrStringsHlt[i],10000,0.5,10000.5);
+    h_freq_HLT_psc[i] ->GetXaxis()->SetTitle("N^{psc}_{evts} since trigger last fired (HLT)");
+    h_freq_HLT_psc[i] ->SetLineColor(8);
+  }
 
   cout << endl;
   cout << "input file   " << inputfile << endl;
@@ -129,7 +157,10 @@
   cout << endl;
 
 
-
+  Long64_t last_jentry_L1_raw[nTriggers_L1]  = {0};
+  Long64_t last_jentry_L1_psc[nTriggers_L1]  = {0};
+  Long64_t last_jentry_HLT_raw[nTriggersHlt] = {0};
+  Long64_t last_jentry_HLT_psc[nTriggersHlt] = {0};
 
   Long64_t evtCount=0;
   Long64_t nbytes = 0, nb = 0;

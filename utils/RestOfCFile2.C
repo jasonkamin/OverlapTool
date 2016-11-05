@@ -23,58 +23,67 @@
     Double_t thisEvtSizeAve_raw = 0.0;
     Double_t thisEvtSizeMax_raw = 0.0;
 
-    for(int i=0; i<nTriggers_L1; i++){//-------------------------------------------------------------------------------------------------------- 
-      if(My_L1[i]){//----------------------------------------------------------------------------------------------------------              //|L 
-        nEvts_L1_raw[i]++;                                                                                                  //|I             //|O 
-        FiredL1_raw[i] = 1;                                                                                                 //|F             //|O 
-        if(AlreadyFired_L1_raw==0)                                                                                          //|              //|P 
-          TotalEvt_L1_raw++;                                                                                                //|I             //|  
-        AlreadyFired_L1_raw++;                                                                                              //|F             //|L 
-                                                                                                                            //|              //|O 
-        for(int j=0; j<nTriggersHlt; j++)                                                                                   //|I             //|O 
-          if(MyHLT[j] && L1PathForHLT[j]==i){                                                                               //|F             //|P 
-            nEvtsHlt_ps1[j]++;                                                                                              //|              //|  
-            FiredTr_raw[j] = 1;                                                                                             //|I             //|L 
-            FiredPD_raw[PDForHltID[j]] = 1;                                                                                 //|F             //|O 
-            if(EvtSizeHlt[j]>thisEvtSizeMax_raw)                                                                            //|              //|O 
-              thisEvtSizeMax_raw = EvtSizeHlt[j];                                                                           //|I             //|P 
-            thisEvtSizeAve_raw  += EvtSizeHlt[j];                                                                           //|F             //|  
-          }                                                                                                                 //|              //|L 
-                                                                                                                            //|I             //|O 
-        if(Int_t(nEvts_L1_raw[i])%Int_t(PreScale_L1[i])==0){ //----------------------------------------------               //|F             //|O 
-          nEvts_L1_psc[i]++;                                                                              //|I              //|              //|P 
-          FiredL1_psc[i] = 1;                                                                             //|F              //|I             //| 
-          if(AlreadyFired_L1_psc==0)                                                                      //|               //|F             //|L 
-            TotalEvt_L1_psc++;                                                                            //|I              //|              //|O 
-          AlreadyFired_L1_psc++;                                                                          //|F              //|I             //|O 
-                                                                                                          //|               //|F             //|P 
-          for(int j=0; j<nTriggersHlt; j++){ //--------------------------------------------               //|I              //|              //|  
-            if(MyHLT[j] && L1PathForHLT[j]==i){ //---------------------------------     //|L              //|F              //|I             //|L 
-              nEvtsHlt_raw[j]++;                                                //|I    //|O              //|               //|F             //|O 
-              if(AlreadyFiredHlt_raw==0)                                        //|F    //|O              //|I              //|              //|O 
-                TotalEvtHlt_raw++;                                              //|     //|P              //|F              //|I             //|P 
-              AlreadyFiredHlt_raw++;                                            //|I    //|               //|               //|F             //|  
-                                                                                //|F    //|L              //|I              //|              //|L 
-              if(Int_t(nEvtsHlt_raw[j])%Int_t(PreScaleHlt[j])==0){ //------     //|     //|O              //|F              //|I             //|O 
-                nEvtsHlt_psc[j]++;                                      //|I    //|I    //|O              //|               //|F             //|O 
-                FiredTr_psc[j] = 1;                                     //|F    //|F    //|P              //|I              //|              //|P 
-                FiredPD_psc[PDForHltID[j]] = 1;                         //|     //|     //|               //|F              //|I             //|  
-                if(EvtSizeHlt[j]>thisEvtSizeMax_psc)                    //|I    //|I    //|L              //|               //|F             //|L 
-                  thisEvtSizeMax_psc = EvtSizeHlt[j];                   //|F    //|F    //|O              //|I              //|              //|O 
-                thisEvtSizeAve_psc  += EvtSizeHlt[j];                   //|     //|     //|O              //|F              //|I             //|O 
-                if(AlreadyFiredHlt_psc==0)                              //|I    //|I    //|P              //|               //|F             //|P 
-                  TotalEvtHlt_psc++;                                    //|F    //|F    //|               //|I              //|              //| 
-                AlreadyFiredHlt_psc++;                                  //|     //|     //|L              //|F              //|I             //|L
-              }// HLT pScale //--------------------------------------------     //|I    //|O              //|               //|F             //|O
-                                                                                //|F    //|O              //|I              //|              //|O
-            }// if HLT fired //----------------------------------------------------     //|P              //|F              //|I             //|P
-          }// HLT loop //------------------------------------------------------------------               //|               //|F             //| 
-                                                                                                          //|               //|              //|L
-        }// L1 pScale //-------------------------------------------------------------------------------------               //|I             //|O
-                                                                                                                            //|F             //|O
-      }// if L1 fired //-------------------------------------------------------------------------------------------------------              //|P
-    }// L1 loop //------------------------------------------------------------------------------------------------------------------------------ 
 
+    for(int i=0; i<nTriggers_L1; i++){//--------------------------------------------------------------------------------------- 
+      if(My_L1[i]){//---------------------------------------------------------------------------------------------------    //| 
+        nEvts_L1_raw[i]++;                                                                                           //|    //|L
+        FiredL1_raw[i] = 1;                                                                                          //|I   //|O
+        h_freq_L1_raw[i]->Fill(jentry-last_jentry_L1_raw[i]);                                                        //|F   //|O
+        last_jentry_L1_raw[i] = jentry;                                                                              //|    //|P
+        if(AlreadyFired_L1_raw==0)                                                                                   //|I   //| 
+          TotalEvt_L1_raw++;                                                                                         //|F   //|L
+        AlreadyFired_L1_raw++;                                                                                       //|    //|O
+                                                                                                                     //|I   //|O
+        for(int j=0; j<nTriggersHlt; j++)                                                                            //|F   //|P
+          if(MyHLT[j] && L1PathForHLT[j]==i){                                                                        //|    //| 
+            nEvtsHlt_ps1[j]++;                                                                                       //|I   //|L
+            FiredTr_raw[j] = 1;                                                                                      //|F   //|O
+            FiredPD_raw[PDForHltID[j]] = 1;                                                                          //|    //|O
+            h_freq_HLT_raw[j]->Fill(jentry-last_jentry_HLT_raw[j]);                                                  //|I   //|P
+            last_jentry_HLT_raw[j] = jentry;                                                                         //|F   //|
+            if(EvtSizeHlt[j]>thisEvtSizeMax_raw)                                                                     //|    //|L
+              thisEvtSizeMax_raw = EvtSizeHlt[j];                                                                    //|I   //|O
+            thisEvtSizeAve_raw  += EvtSizeHlt[j];                                                                    //|F   //|O
+          }                                                                                                          //|    //|P
+                                                                                                                     //|I   //| 
+        if(Int_t(nEvts_L1_raw[i])%Int_t(PreScale_L1[i])==0){ //--------------------------------------------------    //|F   //|L
+          nEvts_L1_psc[i]++;                                                                                  //|I   //|    //|O
+          FiredL1_psc[i] = 1;                                                                                 //|F   //|I   //|O
+          h_freq_L1_psc[i]->Fill(jentry-last_jentry_L1_psc[i]);                                               //|    //|F   //|P
+          last_jentry_L1_psc[i] = jentry;                                                                     //|    //|    //|
+          if(AlreadyFired_L1_psc==0)                                                                          //|    //|I   //|L
+            TotalEvt_L1_psc++;                                                                                //|I   //|F   //|O
+          AlreadyFired_L1_psc++;                                                                              //|F   //|    //|O
+                                                                                                              //|    //|I   //|P
+          for(int j=0; j<nTriggersHlt; j++){ //-----------------------------------------------------          //|I   //|F   //| 
+            if(MyHLT[j] && L1PathForHLT[j]==i){ //-------------------------------------------    //|          //|F   //|    //|L
+              nEvtsHlt_raw[j]++;                                                          //|    //|L         //|    //|I   //|O
+              h_freq_HLT_psc[j]->Fill(jentry-last_jentry_HLT_psc[j]);                     //|I   //|O         //|I   //|F   //|O
+              last_jentry_HLT_psc[j] = jentry;                                            //|F   //|O         //|F   //|    //|P
+              if(AlreadyFiredHlt_raw==0)                                                  //|    //|P         //|I   //|I   //| 
+                TotalEvtHlt_raw++;                                                        //|I   //|          //|F   //|F   //|L
+              AlreadyFiredHlt_raw++;                                                      //|F   //|L         //|    //|    //|O
+                                                                                          //|    //|O         //|I   //|I   //|O
+              //if(Int_t(nEvtsHlt_raw[j])%Int_t(PreScaleHlt[j])==0){ //---------------    //|    //|O         //|F   //|I   //|O
+              if(Int_t(nEvts_L1_psc[L1PathForHLT[j]])%Int_t(PreScaleHlt[j])==0){ //---    //|I   //|O         //|F   //|F   //|P
+                nEvtsHlt_psc[j]++;                                                 //|I   //|F   //|P         //|    //|    //| 
+                FiredTr_psc[j] = 1;                                                //|F   //|    //|          //|I   //|I   //|L
+                FiredPD_psc[PDForHltID[j]] = 1;                                    //|    //|I   //|L         //|F   //|F   //|O
+                if(EvtSizeHlt[j]>thisEvtSizeMax_psc)                               //|I   //|F   //|O         //|    //|    //|O
+                  thisEvtSizeMax_psc = EvtSizeHlt[j];                              //|F   //|    //|O         //|I   //|I   //|P
+                thisEvtSizeAve_psc  += EvtSizeHlt[j];                              //|    //|I   //|P         //|F   //|F   //| 
+                if(AlreadyFiredHlt_psc==0)                                         //|I   //|F   //|          //|    //|    //|L
+                  TotalEvtHlt_psc++;                                               //|F   //|    //|L         //|I   //|I   //|O
+                AlreadyFiredHlt_psc++;                                             //|    //|I   //|O         //|F   //|F   //|O
+              }// HLT pScale //-------------------------------------------------------    //|F   //|O         //|    //|    //|P
+                                                                                          //|    //|P         //|I   //|I   //| 
+            }// if HLT fired //--------------------------------------------------------------    //|          //|F   //|F   //|L
+          }// HLT loop //---------------------------------------------------------------------------          //|    //|    //|O
+                                                                                                              //|    //|I   //|O
+        }// L1 pScale //-----------------------------------------------------------------------------------------    //|F   //|P
+                                                                                                                     //|    //| 
+      }// if L1 fired //------------------------------------------------------------------------------------------------    //| 
+    }// L1 loop //-------------------------------------------------------------------------------------------------------------
 
 
     for(int i=0; i<nTriggers_L1; i++){
@@ -233,8 +242,8 @@
 
   cout << endl;
   cout << "____________________________________________________________________________________________________________________________________________________   " << endl;
-  cout << "                  TRIGGER STRING                                 | nEvts fired | L1 pScale | Survive HLT | HLT pScale|  Rec Events |      Rate     |   " << endl;
-  cout << " --------------------------------------------------------------- | L1&&HLT PS1 | --------- | after L1 PS | --------- | ----------- | ------------- |   " << endl;
+  cout << "                  TRIGGER STRING                                 |  NoPS Evts  | L1 pScale | Survive HLT | HLT pScale|  Rec Events |      Rate     |   " << endl;
+  cout << " --------------------------------------------------------------- | fired L1&HLT| --------- | -after L1 ps| --------- | ----------- | ------------- |   " << endl;
 
   for(int i=0; i<nTriggersHlt; i++){
     if(PreScaleHlt[i]>1e8)
@@ -252,10 +261,8 @@
     else                       sprintf(saythis5,"%5d",Int_t(PreScaleHlt[i]));
     if(PreScale_L1[L1PathForHLT[i]]>199999)  sprintf(saythis6,"  2e5");
     else                                     sprintf(saythis6,"%5d",Int_t(PreScale_L1[L1PathForHLT[i]]));
-    //if(i>0)
-    //  if(PDForHltID[i]!=PDForHltID[i-1])
-    //    cout << endl << endl;
     cout << saythis << "  |   " << saythis1  << "    |   " << saythis6  << "   |   " << saythis2  << "    |   " << saythis5  << "   |   " << saythis3 << "    |   " << saythis7 << "    |   " << endl;
+    //cout << nEvtsHlt_ps1[i]/PreScale_L1[L1PathForHLT[i]] << " / " << nEvtsHlt_raw[i] << " = " << nEvtsHlt_ps1[i]/PreScale_L1[L1PathForHLT[i]]/nEvtsHlt_raw[i] << endl << endl;
   }
   cout << " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - " << endl;
   sprintf(saythis1,"%6d",  SumOfEvtHlt_raw);
@@ -445,6 +452,15 @@
 
 
   TFile *fout = new TFile(outputfile,"RECREATE");
+  for(int i=0; i<nTriggers_L1; i++){
+    h_freq_L1_raw[i] ->Write();
+    h_freq_L1_psc[i] ->Write();
+  }
+  for(int i=0; i<nTriggersHlt; i++){
+    h_freq_HLT_raw[i] ->Write();
+    h_freq_HLT_psc[i] ->Write();
+  }
+
   h_L1_L1_raw->Write();
   h_L1_L1_psc->Write();
   h_tr_tr_raw->Write();
