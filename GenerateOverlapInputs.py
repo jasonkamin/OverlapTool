@@ -183,7 +183,7 @@ rootfilefortree.write("  return;\n")
 rootfilefortree.write("}\n")
 rootfilefortree.close()
 
-dothisatprompt = _myrootpath+" -l -q MakeTreeVars_tmp.C\(\\\"~/Desktop/hlt_EPOS_Official10MPartStat_merged.root\\\"\\) | grep -v _Prescl | grep HLT > TreeVarsTmp.txt"
+dothisatprompt = _myrootpath+" -l -q MakeTreeVars_tmp.C\(\\\""+_fileloctree+"\\\"\\) | grep -v _Prescl | grep HLT > TreeVarsTmp.txt"
 os.system(dothisatprompt)
 os.system("rm MakeTreeVars_tmp.C")
 
