@@ -321,12 +321,31 @@
       h_UniqueEffs   ->GetBinContent(i+1) << " . " << endl;
   }
 
-  cout << endl << "   with current prescales:" << endl;
+  cout << endl;
+  cout << "   -_-_-_-_-                       -_-_-_-_-" << endl;
+  cout << "     -_-_-   EVENT SIZES ESTIMATES   -_-_-  " << endl;
+  cout << "       -                               -    " << endl;
+
+  cout << endl << "   ~~with current prescales:" << endl;
   for(int i=0; i<nPrimaryDSet; i++){
     cout << PDStrings[i] << " (" << Int_t(h_RatesPerPD_psc->GetBinContent(i+1)) << " Hz) \thas an estimated average event size " << 
       EvtSizeAvePD_psc[i] << " kb/evt  --(estimated max evt size ~ " << EvtSizeMaxPD_psc[i] << " kb/evt). " << endl;
   }
-  cout << endl << "   without prescales:" << endl;
+  cout << "     ----->" << endl;
+  for(int i=0; i<nPrimaryDSet; i++){
+    cout << PDStrings[i] << "               est. ave data rate:  " << h_RatesPerPD_psc->GetBinContent(i+1)*EvtSizeAvePD_psc[i] << "  kb/sec   (est. max ~  " << 
+      h_RatesPerPD_psc->GetBinContent(i+1)*EvtSizeMaxPD_psc[i] << "  kb/sec). " << endl;
+  }
+  Double_t TotalDataRateAve = 0.0;
+  Double_t TotalDataRateMax = 0.0;
+  for(int i=0; i<nPrimaryDSet; i++){
+    if(EvtSizeAvePD_psc[i]==EvtSizeAvePD_psc[i])
+      TotalDataRateAve += h_RatesPerPD_psc->GetBinContent(i+1)*EvtSizeAvePD_psc[i];
+    if(EvtSizeMaxPD_psc[i]==EvtSizeMaxPD_psc[i])
+      TotalDataRateMax += h_RatesPerPD_psc->GetBinContent(i+1)*EvtSizeMaxPD_psc[i];
+  }
+  cout << "          -----> TOTAL DATA RATES:                                   " << TotalDataRateAve << "  kb/sec (ave)         " << TotalDataRateMax << "  kb/sec (max)." << endl;
+  cout << endl << endl << "   ~~without prescales:" << endl;
   for(int i=0; i<nPrimaryDSet; i++){
     cout << PDStrings[i] << " (" << Int_t(h_RatesPerPD_raw->GetBinContent(i+1)) << " Hz) \thas estimated average event size " << 
       EvtSizeAvePD_raw[i] << " kb/evt  --(estimated max evt size ~ " << EvtSizeMaxPD_raw[i] << " kb/evt). " << endl;
@@ -340,6 +359,7 @@
   cout << " We stored a total of  " << TotalEventsStored << "  events." << endl;
   cout << " Events that were in some way redundant:  " << RedundantEvents << endl;
   cout << " If we had only 1 PD, we'd have stored  " << h_nPDsFired->Integral(2,-1) << "  events." << endl;
+  cout << " We are writing " << 100.0*RedundantEvents/h_nPDsFired->Integral(2,-1) << " \% too many events." << endl;
 
   cout << endl;
   cout << "_______________________________________________________________________" << endl;

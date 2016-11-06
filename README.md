@@ -2,7 +2,10 @@
 
 This tool calculates trigger overlaps (and PD overlaps) for a CMS triggering emulator. 
 
+
 *note: this currently requires that you have the triggers ordered by Primary Dataset. To be remedied in the future!*
+
+A comment about the event sizes: The event size \<\<in a given PD\>\> is calculated in two ways. First, for events that fire two (or more) different triggers, it averages the event sizes of the various triggers that fired (this is labeled "estimated average event size").  Alternatively, it simply takes the largest event size of all triggers that fired that event (this is labeled "estimated max evt size").
 
 To run it, you'll need a text file with triggers, prescales, and PDs in it. 
 see ExampleInputFile.txt
