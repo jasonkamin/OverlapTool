@@ -119,7 +119,9 @@ for line in my_h_file:
         if linecounter == 3:
             line = "         f = new TFile(inputfile);\n"
         if linecounter == 4:
-            line = "      TDirectory * dir = (TDirectory*)f->Get(\"hltbitanalysis\");\n"
+            mydirectoryline = line
+        #if linecounter == 4: #now we have this directory get set automatically by the MakeClass. 
+            #line = "      TDirectory * dir = (TDirectory*)f->Get(\"hltbitanalysis\");\n"
     my_new_h_file.write(line)
 my_new_h_file.close()
 
@@ -176,8 +178,9 @@ rootfilefortree.write("#include \"TTree.h\"\n\n")
 rootfilefortree.write("void MakeTreeVars_tmp(const char *filename)\n\n")
 rootfilefortree.write("{\n")
 rootfilefortree.write("  char saythis[500];\n\n")
-rootfilefortree.write("  TFile *f1 = TFile::Open(filename);\n")
-rootfilefortree.write("  TTree *HltTree = (TTree*)f1->GetDirectory(\"hltbitanalysis\")->Get(\"HltTree\");\n")
+rootfilefortree.write("  TFile *f = TFile::Open(filename);\n")
+rootfilefortree.write(mydirectoryline)
+rootfilefortree.write("  TTree *HltTree = (TTree*)dir->Get(\"HltTree\");\n")
 rootfilefortree.write("  HltTree->Show();\n\n")
 rootfilefortree.write("  return;\n")
 rootfilefortree.write("}\n")
