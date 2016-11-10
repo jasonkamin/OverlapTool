@@ -187,10 +187,14 @@
   h_RatesPerTr_raw->Scale(FullRate/Double_t(evtCount));
 
   for(int i=0; i<nPrimaryDSet; i++){
-    EvtSizeMaxPD_psc[i] = TotSizeMaxPD_psc[i]/h_TotalEvts_psc->GetBinContent(i+1);
-    EvtSizeAvePD_psc[i] = TotSizeAvePD_psc[i]/h_TotalEvts_psc->GetBinContent(i+1);
-    EvtSizeMaxPD_raw[i] = TotSizeMaxPD_raw[i]/h_TotalEvts_raw->GetBinContent(i+1);
-    EvtSizeAvePD_raw[i] = TotSizeAvePD_raw[i]/h_TotalEvts_raw->GetBinContent(i+1);
+    if(h_TotalEvts_psc->GetBinContent(i+1)>0){
+      EvtSizeMaxPD_psc[i] = TotSizeMaxPD_psc[i]/h_TotalEvts_psc->GetBinContent(i+1);
+      EvtSizeAvePD_psc[i] = TotSizeAvePD_psc[i]/h_TotalEvts_psc->GetBinContent(i+1);
+    }
+    if(h_TotalEvts_raw->GetBinContent(i+1)>0){
+      EvtSizeMaxPD_raw[i] = TotSizeMaxPD_raw[i]/h_TotalEvts_raw->GetBinContent(i+1);
+      EvtSizeAvePD_raw[i] = TotSizeAvePD_raw[i]/h_TotalEvts_raw->GetBinContent(i+1);
+    }
   }
 
 
@@ -359,7 +363,8 @@
   cout << " We stored a total of  " << TotalEventsStored << "  events." << endl;
   cout << " Events that were in some way redundant:  " << RedundantEvents << endl;
   cout << " If we had only 1 PD, we'd have stored  " << h_nPDsFired->Integral(2,-1) << "  events." << endl;
-  cout << " We are writing " << 100.0*RedundantEvents/h_nPDsFired->Integral(2,-1) << " \% too many events." << endl;
+  if(h_nPDsFired->Integral(2,-1)>0)
+    cout << " We are writing " << 100.0*RedundantEvents/h_nPDsFired->Integral(2,-1) << " \% too many events." << endl;
 
   cout << endl;
   cout << "_______________________________________________________________________" << endl;
