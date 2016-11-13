@@ -179,8 +179,11 @@ rootfilefortree.write("void MakeTreeVars_tmp(const char *filename)\n\n")
 rootfilefortree.write("{\n")
 rootfilefortree.write("  char saythis[500];\n\n")
 rootfilefortree.write("  TFile *f = TFile::Open(filename);\n")
-rootfilefortree.write(mydirectoryline)
-rootfilefortree.write("  TTree *HltTree = (TTree*)dir->Get(\"HltTree\");\n")
+if 'mydirectoryline' in locals():
+    rootfilefortree.write(mydirectoryline)
+    rootfilefortree.write("  TTree *HltTree = (TTree*)dir->Get(\"HltTree\");\n")
+else:
+    rootfilefortree.write("  TTree *HltTree = (TTree*)f->Get(\"HltTree\");\n")
 rootfilefortree.write("  HltTree->Show();\n\n")
 rootfilefortree.write("  return;\n")
 rootfilefortree.write("}\n")

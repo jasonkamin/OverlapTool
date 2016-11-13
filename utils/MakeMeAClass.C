@@ -10,6 +10,8 @@ void MakeMeAClass(const char *filename, const char *mytag)
   mydir = (TDirectory*)f1->GetDirectory("hltanalysis");
   if(!mydir)
     mydir = (TDirectory*)f1->GetDirectory("hltbitanalysis");
+  if(!mydir)
+    mydir = (TDirectory*)f1->GetDirectory("");
   TTree *HltTree = (TTree*)mydir->Get("HltTree");
   sprintf(saythis,"LoopForOverlaps__%s",mytag);
   //cout << saythis << endl;
